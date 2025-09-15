@@ -18,8 +18,16 @@ const nextConfig: NextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  
   images: {
     remotePatterns: [
+      // Explicitly allow amimore.ru
+      {
+        protocol: 'https',
+        hostname: 'amimore.ru',
+        port: '',
+        pathname: '/**',
+      },
       // Allow all HTTPS domains
       {
         protocol: 'https',
@@ -35,7 +43,6 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
     ],
-    // Allow all image formats and optimize for Vercel deployment
     formats: ['image/avif', 'image/webp'],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
     deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
