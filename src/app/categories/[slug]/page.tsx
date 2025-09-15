@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import { getCategoryBySlug, getPatternsByCategoryAndSubcategories, getSubcategories, getCategoryStats } from '@/lib/data'
-import { generateBreadcrumbData, getCategoryPath } from '@/lib/utils'
+import { generateBreadcrumbData, getCategoryPath, cleanCategoryName } from '@/lib/utils'
 import PatternCard from '@/components/PatternCard'
 
 interface PageProps {
@@ -25,22 +25,23 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 
   // Enhanced SEO-optimized title and description targeting "crochet patterns for [category]"
-  const seoTitle = `${category.name} Crochet Patterns - Free & Premium Designs | Crochet911`
-  const seoDescription = `Discover ${category.name.toLowerCase()} crochet patterns for all skill levels. Browse hundreds of free and premium ${category.name.toLowerCase()} crochet designs from talented designers worldwide. Perfect for beginners to experts. Find easy ${category.name.toLowerCase()} patterns, advanced designs, and everything in between.`
+  const cleanName = cleanCategoryName(category.name)
+  const seoTitle = `${cleanName} Crochet Patterns - Free & Premium Designs | Crochet911`
+  const seoDescription = `Discover ${cleanName.toLowerCase()} crochet patterns for all skill levels. Browse hundreds of free and premium ${cleanName.toLowerCase()} crochet designs from talented designers worldwide. Perfect for beginners to experts. Find easy ${cleanName.toLowerCase()} patterns, advanced designs, and everything in between.`
   
   const keywords = [
-    `${category.name.toLowerCase()} crochet patterns`,
-    `crochet patterns for ${category.name.toLowerCase()}`,
-    `free ${category.name.toLowerCase()} crochet patterns`,
-    `${category.name.toLowerCase()} amigurumi patterns`,
-    `easy ${category.name.toLowerCase()} crochet`,
-    `beginner ${category.name.toLowerCase()} crochet patterns`,
-    `${category.name.toLowerCase()} crochet designs`,
-    `${category.name.toLowerCase()} crochet tutorial`,
-    `${category.name.toLowerCase()} crochet ideas`,
-    `how to crochet ${category.name.toLowerCase()}`,
-    `${category.name.toLowerCase()} crochet pattern free`,
-    `crochet ${category.name.toLowerCase()} step by step`
+    `${cleanName.toLowerCase()} crochet patterns`,
+    `crochet patterns for ${cleanName.toLowerCase()}`,
+    `free ${cleanName.toLowerCase()} crochet patterns`,
+    `${cleanName.toLowerCase()} amigurumi patterns`,
+    `easy ${cleanName.toLowerCase()} crochet`,
+    `beginner ${cleanName.toLowerCase()} crochet patterns`,
+    `${cleanName.toLowerCase()} crochet designs`,
+    `${cleanName.toLowerCase()} crochet tutorial`,
+    `${cleanName.toLowerCase()} crochet ideas`,
+    `how to crochet ${cleanName.toLowerCase()}`,
+    `${cleanName.toLowerCase()} crochet pattern free`,
+    `crochet ${cleanName.toLowerCase()} step by step`
   ]
 
   return {
@@ -93,18 +94,19 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
 
   const breadcrumbPath = getCategoryPath(category)
   const breadcrumbData = generateBreadcrumbData(breadcrumbPath)
+  const cleanName = cleanCategoryName(category.name)
   
   // Enhanced structured data for better SEO
   const structuredData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    name: `Crochet Patterns for ${category.name}`,
-    description: `Complete collection of ${category.name.toLowerCase()} crochet patterns for all skill levels. Free and premium designs with step-by-step instructions.`,
+    name: `${cleanName} Crochet Patterns`,
+    description: `Complete collection of ${cleanName.toLowerCase()} crochet patterns for all skill levels. Free and premium designs with step-by-step instructions.`,
     url: `${process.env.NEXT_PUBLIC_SITE_URL}/categories/${params.slug}`,
     keywords: [
-      `${category.name.toLowerCase()} crochet patterns`,
-      `crochet patterns for ${category.name.toLowerCase()}`,
-      `free ${category.name.toLowerCase()} crochet`
+      `${cleanName.toLowerCase()} crochet patterns`,
+      `crochet patterns for ${cleanName.toLowerCase()}`,
+      `free ${cleanName.toLowerCase()} crochet`
     ].join(', '),
     mainEntity: {
       '@type': 'ItemList',
@@ -200,13 +202,13 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           {/* SEO-Optimized Page Header */}
           <div className="mb-8">
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 mb-6">
-              {category.name} Crochet Patterns
+              {cleanName} Crochet Patterns
             </h1>
             <div className="max-w-4xl">
               <p className="text-xl text-slate-600 mb-4 leading-relaxed">
-                Explore our comprehensive collection of <strong>{category.name.toLowerCase()} crochet patterns</strong> designed for all skill levels. 
-                Whether you're searching for <em>free {category.name.toLowerCase()} crochet patterns</em> or premium designs, 
-                you'll find the perfect <strong>crochet patterns for {category.name.toLowerCase()}</strong> to bring your creative vision to life.
+                Explore our comprehensive collection of <strong>{cleanName.toLowerCase()} crochet patterns</strong> designed for all skill levels. 
+                Whether you're searching for <em>free {cleanName.toLowerCase()} crochet patterns</em> or premium designs, 
+                you'll find the perfect <strong>crochet patterns for {cleanName.toLowerCase()}</strong> to bring your creative vision to life.
               </p>
               {category.description && (
                 <p className="text-lg text-slate-600 leading-relaxed mb-4">
@@ -214,9 +216,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                 </p>
               )}
               <p className="text-lg text-slate-600 leading-relaxed">
-                From beginner-friendly <strong>easy {category.name.toLowerCase()} crochet patterns</strong> to advanced designs for experienced crafters, 
+                From beginner-friendly <strong>easy {cleanName.toLowerCase()} crochet patterns</strong> to advanced designs for experienced crafters, 
                 our curated collection includes detailed instructions, material lists, and helpful tips to ensure your success. 
-                Start your next {category.name.toLowerCase()} crochet project today!
+                Start your next {cleanName.toLowerCase()} crochet project today!
               </p>
             </div>
           </div>
@@ -244,7 +246,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
           {/* Subcategories Navigation */}
           {subcategories.length > 0 && (
             <div className="mb-8">
-              <h2 className="text-2xl font-bold text-slate-900 mb-6">Browse {category.name} by Type</h2>
+              <h2 className="text-2xl font-bold text-slate-900 mb-6">Browse {cleanName} by Type</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
                 {subcategories.map((subcat) => (
                   <Link
@@ -270,35 +272,35 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             {/* SEO Content Section */}
             <div className="mb-12">
               <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                Why Choose Our {category.name} Crochet Patterns?
+                Why Choose Our {cleanName} Crochet Patterns?
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">🎯 Perfect for All Skill Levels</h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Our {category.name.toLowerCase()} crochet pattern collection includes designs for everyone, from 
-                    <strong> beginner {category.name.toLowerCase()} crochet patterns</strong> with step-by-step tutorials 
+                    Our {cleanName.toLowerCase()} crochet pattern collection includes designs for everyone, from 
+                    <strong> beginner {cleanName.toLowerCase()} crochet patterns</strong> with step-by-step tutorials 
                     to advanced designs that challenge experienced crocheters.
                   </p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">💝 Free & Premium Options</h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Discover both <strong>free {category.name.toLowerCase()} crochet patterns</strong> and premium designs. 
+                    Discover both <strong>free {cleanName.toLowerCase()} crochet patterns</strong> and premium designs. 
                     Each pattern includes detailed instructions, material lists, and helpful tips for successful completion.
                   </p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">📚 Detailed Instructions</h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Every <strong>{category.name.toLowerCase()} crochet pattern</strong> comes with clear, 
+                    Every <strong>{cleanName.toLowerCase()} crochet pattern</strong> comes with clear, 
                     easy-to-follow instructions, stitch guides, and helpful photos to ensure your project turns out perfect.
                   </p>
                 </div>
                 <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
                   <h3 className="text-xl font-semibold text-slate-900 mb-4">🌟 Designer Quality</h3>
                   <p className="text-slate-600 leading-relaxed">
-                    All our <strong>crochet patterns for {category.name.toLowerCase()}</strong> are created by 
+                    All our <strong>crochet patterns for {cleanName.toLowerCase()}</strong> are created by 
                     talented designers and thoroughly tested to ensure accuracy and beautiful results.
                   </p>
                 </div>
@@ -339,36 +341,36 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             {/* SEO FAQ Section */}
             <div className="mt-16 bg-white rounded-xl p-8 shadow-sm border border-slate-200">
               <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-                Frequently Asked Questions About {category.name} Crochet Patterns
+                Frequently Asked Questions About {cleanName} Crochet Patterns
               </h2>
               <div className="space-y-6">
                 <div className="border-b border-slate-200 pb-6">
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    What skill level do I need for {category.name.toLowerCase()} crochet patterns?
+                    What skill level do I need for {cleanName.toLowerCase()} crochet patterns?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Our {category.name.toLowerCase()} crochet pattern collection includes designs for all skill levels. 
-                    Beginners can start with simple {category.name.toLowerCase()} patterns that use basic stitches, 
+                    Our {cleanName.toLowerCase()} crochet pattern collection includes designs for all skill levels. 
+                    Beginners can start with simple {cleanName.toLowerCase()} patterns that use basic stitches, 
                     while experienced crocheters can challenge themselves with intricate designs featuring advanced techniques.
                   </p>
                 </div>
                 
                 <div className="border-b border-slate-200 pb-6">
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    Are there free {category.name.toLowerCase()} crochet patterns available?
+                    Are there free {cleanName.toLowerCase()} crochet patterns available?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Yes! We offer many free {category.name.toLowerCase()} crochet patterns alongside our premium designs. 
+                    Yes! We offer many free {cleanName.toLowerCase()} crochet patterns alongside our premium designs. 
                     Free patterns include basic instructions and are perfect for trying new techniques or quick projects.
                   </p>
                 </div>
                 
                 <div className="border-b border-slate-200 pb-6">
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    What materials do I need for {category.name.toLowerCase()} crochet projects?
+                    What materials do I need for {cleanName.toLowerCase()} crochet projects?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Each {category.name.toLowerCase()} crochet pattern includes a complete materials list with yarn weight, 
+                    Each {cleanName.toLowerCase()} crochet pattern includes a complete materials list with yarn weight, 
                     hook sizes, and any additional supplies needed. Most patterns can be adapted to use different yarn weights 
                     with appropriate hook size adjustments.
                   </p>
@@ -376,11 +378,11 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                 
                 <div>
                   <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    How long does it take to complete {category.name.toLowerCase()} crochet patterns?
+                    How long does it take to complete {cleanName.toLowerCase()} crochet patterns?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
                     The time required depends on the complexity of the pattern and your skill level. 
-                    Simple {category.name.toLowerCase()} projects might take a few hours, while detailed designs could take several days or weeks. 
+                    Simple {cleanName.toLowerCase()} projects might take a few hours, while detailed designs could take several days or weeks. 
                     Each pattern includes an estimated completion time to help you plan your project.
                   </p>
                 </div>
@@ -390,34 +392,34 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             {/* Additional SEO Content */}
             <div className="mt-12 bg-slate-50 rounded-xl p-8">
               <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">
-                Tips for Success with {category.name} Crochet Patterns
+                Tips for Success with {cleanName} Crochet Patterns
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">🧶 Choose the Right Yarn</h3>
                   <p className="text-slate-600 mb-4">
                     Select yarn that matches the pattern specifications for best results. 
-                    The yarn weight and fiber content significantly impact the final appearance of your {category.name.toLowerCase()} project.
+                    The yarn weight and fiber content significantly impact the final appearance of your {cleanName.toLowerCase()} project.
                   </p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">🔍 Check Your Gauge</h3>
                   <p className="text-slate-600 mb-4">
-                    Always make a gauge swatch before starting your {category.name.toLowerCase()} crochet pattern. 
+                    Always make a gauge swatch before starting your {cleanName.toLowerCase()} crochet pattern. 
                     This ensures your finished project will be the correct size.
                   </p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">📝 Read Carefully</h3>
                   <p className="text-slate-600 mb-4">
-                    Read through the entire {category.name.toLowerCase()} pattern before beginning. 
+                    Read through the entire {cleanName.toLowerCase()} pattern before beginning. 
                     Understanding the construction method helps avoid mistakes and ensures smooth progress.
                   </p>
                 </div>
                 <div>
                   <h3 className="text-lg font-semibold text-slate-900 mb-3">🎆 Practice New Stitches</h3>
                   <p className="text-slate-600 mb-4">
-                    If your chosen {category.name.toLowerCase()} pattern includes unfamiliar stitches, 
+                    If your chosen {cleanName.toLowerCase()} pattern includes unfamiliar stitches, 
                     practice them on a small swatch first to build confidence and muscle memory.
                   </p>
                 </div>
@@ -427,9 +429,9 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
         ) : (
           <div className="text-center py-16">
             <div className="bg-white rounded-xl p-12 shadow-sm border border-slate-200">
-              <h3 className="text-2xl font-semibold text-slate-900 mb-4">No {category.name} Patterns Found</h3>
+              <h3 className="text-2xl font-semibold text-slate-900 mb-4">No {cleanName} Patterns Found</h3>
               <p className="text-slate-600 mb-6 max-w-2xl mx-auto">
-                We're currently building our collection of {category.name.toLowerCase()} crochet patterns. 
+                We're currently building our collection of {cleanName.toLowerCase()} crochet patterns. 
                 Check back soon for new designs, or explore our other categories for inspiration!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">

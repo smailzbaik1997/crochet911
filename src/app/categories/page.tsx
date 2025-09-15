@@ -1,6 +1,26 @@
-import { Metadata } from 'next'
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import { getCategoriesWithSubcategories } from '@/lib/data'
+
+// Type definitions
+type Subcategory = {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  parent_id?: string
+  sort_order?: number
+}
+
+type Category = {
+  id: string
+  name: string
+  slug: string
+  description?: string
+  parent_id?: string
+  sort_order?: number
+  subcategories?: Subcategory[]
+}
 
 export const metadata: Metadata = {
   title: 'Crochet Pattern Categories | Crochet911',
@@ -57,7 +77,7 @@ export default async function CategoriesPage() {
 
         {/* Categories Grid */}
         <div className="space-y-12">
-          {categories.map((category) => (
+          {categories.map((category: Category) => (
             <div key={category.id} className="bg-white rounded-xl shadow-sm overflow-hidden border border-slate-200">
               {/* Category Header */}
               <div className="bg-slate-900 px-8 py-10">
@@ -93,7 +113,7 @@ export default async function CategoriesPage() {
                 <div className="p-8">
                   <h3 className="text-lg font-semibold text-slate-900 mb-6">Browse {category.name}</h3>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
-                    {category.subcategories.map((subcat) => (
+                    {category.subcategories.map((subcat: Subcategory) => (
                       <Link
                         key={subcat.id}
                         href={`/categories/${subcat.slug}`}

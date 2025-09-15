@@ -1,8 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { Metadata } from 'next'
 import { getAllPatterns, searchPatterns } from '@/lib/data'
 import PatternCard from '@/components/PatternCard'
 import Link from 'next/link'
@@ -29,7 +28,8 @@ interface Pattern {
   }
 }
 
-export default function CrochetPatternsPage() {
+// Separate component for the patterns content that uses useSearchParams
+function PatternsContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('search')
   
@@ -414,5 +414,28 @@ export default function CrochetPatternsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+// Loading fallback component
+function PatternsLoadingFallback() {
+  return (
+    <div className="min-h-screen bg-slate-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="text-center py-16">
+          <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-slate-600">Loading crochet patterns...</p>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+// Main page component that wraps PatternsContent with Suspense
+export default function CrochetPatternsPage() {
+  return (
+    <Suspense fallback={<PatternsLoadingFallback />}>
+      <PatternsContent />
+    </Suspense>
   )
 }

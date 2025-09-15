@@ -187,6 +187,11 @@ export function getValidImageUrl(url: string | null, fallback: string = '/placeh
   }
 }
 
+// Clean category name by removing duplicate "Crochet Patterns" text
+export function cleanCategoryName(categoryName: string): string {
+  return categoryName.replace(' Crochet Patterns', '')
+}
+
 // Format category path for breadcrumbs
 export function getCategoryPath(category: any, subcategory?: any) {
   const path = [
@@ -213,13 +218,15 @@ export function getCategoryPath(category: any, subcategory?: any) {
 
 // Generate SEO-optimized category description
 export function generateCategoryDescription(categoryName: string, patternCount?: number): string {
+  const cleanName = cleanCategoryName(categoryName)
   const count = patternCount ? `${patternCount}+ ` : ''
-  return `Discover ${count}${categoryName.toLowerCase()} crochet patterns for all skill levels. Browse free and premium ${categoryName.toLowerCase()} crochet designs from talented designers worldwide. Perfect patterns for beginners to experts with detailed instructions and helpful tips.`
+  return `Discover ${count}${cleanName.toLowerCase()} crochet patterns for all skill levels. Browse free and premium ${cleanName.toLowerCase()} crochet designs from talented designers worldwide. Perfect patterns for beginners to experts with detailed instructions and helpful tips.`
 }
 
 // Generate long-tail keywords for category pages
 export function generateCategoryKeywords(categoryName: string): string[] {
-  const base = categoryName.toLowerCase()
+  const cleanName = cleanCategoryName(categoryName)
+  const base = cleanName.toLowerCase()
   return [
     `${base} crochet patterns`,
     `crochet patterns for ${base}`,
@@ -241,7 +248,8 @@ export function generateCategoryKeywords(categoryName: string): string[] {
 
 // Generate FAQ content for categories
 export function generateCategoryFAQ(categoryName: string) {
-  const base = categoryName.toLowerCase()
+  const cleanName = cleanCategoryName(categoryName)
+  const base = cleanName.toLowerCase()
   return [
     {
       question: `What skill level do I need for ${base} crochet patterns?`,

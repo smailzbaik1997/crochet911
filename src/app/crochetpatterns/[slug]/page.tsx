@@ -1,7 +1,7 @@
-import { notFound } from 'next/navigation'
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
+import { notFound } from 'next/navigation'
 import { getPatternBySlug } from '@/lib/data'
 import { 
   generatePatternStructuredData, 
@@ -12,6 +12,17 @@ import {
   getValidImageUrl,
   generateMetaDescription
 } from '@/lib/utils'
+
+// Type definitions
+type Tag = {
+  id: string
+  name: string
+  color?: string
+}
+
+type PatternTag = {
+  tag: Tag
+}
 
 interface PageProps {
   params: {
@@ -204,58 +215,34 @@ export default async function CrochetPatternPage({ params }: PageProps) {
                 )}
               </div>
 
-              {/* Designer & Category */}
-              <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-gray-600">
-                {pattern.designer && (
-                  <div>
-                    <span className="font-medium">Pattern Designer:</span>{' '}
-                    <Link 
-                      href={`/designers/${pattern.designer.slug}`}
-                      className="text-pink-600 hover:text-pink-700 transition-colors"
-                    >
-                      {pattern.designer.name}
-                    </Link>
-                  </div>
-                )}
-                {pattern.category && (
-                  <div>
-                    <span className="font-medium">Pattern Category:</span>{' '}
-                    <Link 
-                      href={`/categories/${pattern.category.slug}`}
-                      className="text-pink-600 hover:text-pink-700 transition-colors"
-                    >
-                      {pattern.category.name}
-                    </Link>
-                  </div>
-                )}
-              </div>
-
-              {/* Get Pattern Button */}
-              <div className="mb-6">
-                <a
-                  href={pattern.pattern_source_url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="w-full bg-pink-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-pink-700 transition-colors flex items-center justify-center"
-                >
-                  {pattern.is_free ? 'Get This Free Crochet Pattern' : 'Get This Premium Pattern'}
-                  <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                  </svg>
-                </a>
-                {pattern.pattern_source_name && (
-                  <p className="text-center text-sm text-gray-500 mt-2">
-                    Crochet pattern source: {pattern.pattern_source_name}
-                  </p>
-                )}
-              </div>
+              {/* Get Pattern Button - Missing Link from Database */}
+              {pattern.pattern_source_url && (
+                <div className="mb-6">
+                  <a
+                    href={pattern.pattern_source_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+                  >
+                    Get This Free Pattern
+                    <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                    </svg>
+                  </a>
+                  {pattern.pattern_source_name && (
+                    <p className="text-center text-sm text-gray-500 mt-2">
+                      Pattern source: {pattern.pattern_source_name}
+                    </p>
+                  )}
+                </div>
+              )}
 
               {/* Pattern Tags */}
               {pattern.pattern_tags && pattern.pattern_tags.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900 mb-2">Pattern Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {pattern.pattern_tags.map(({ tag }) => (
+                    {pattern.pattern_tags.map(({ tag }: PatternTag) => (
                       <span
                         key={tag.id}
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
@@ -275,7 +262,7 @@ export default async function CrochetPatternPage({ params }: PageProps) {
             <div className="p-8 border-t border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Crochet Pattern</h2>
               <div className="prose max-w-none text-gray-700">
-                {pattern.description.split('\n').map((paragraph, index) => (
+                {pattern.description.split('\n').map((paragraph: string, index: number) => (
                   <p key={index} className="mb-4 leading-relaxed">
                     {paragraph}
                   </p>
@@ -289,7 +276,7 @@ export default async function CrochetPatternPage({ params }: PageProps) {
             <div className="p-8 border-t border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Yarn & Materials for This Crochet Pattern</h2>
               <div className="prose max-w-none text-gray-700">
-                {pattern.yarn_details.split('\n').map((line, index) => (
+                {pattern.yarn_details.split('\n').map((line: string, index: number) => (
                   <p key={index} className="mb-2 leading-relaxed">
                     {line}
                   </p>
