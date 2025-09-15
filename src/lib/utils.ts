@@ -174,13 +174,23 @@ export function generateMetaDescription(pattern: any): string {
   return meta.substring(0, maxLength)
 }
 
-// Validate image URL
-export function getValidImageUrl(url: string | null, fallback: string = '/placeholder-pattern.jpg'): string {
+// Validate image URL with better fallback handling
+export function getValidImageUrl(url: string | null, fallback: string = 'https://via.placeholder.com/400x300/e2e8f0/64748b?text=Crochet+Pattern'): string {
   if (!url) return fallback
   
   // Check if it's a valid URL
   try {
-    new URL(url)
+    const parsedUrl = new URL(url)
+    
+    // If it's an Airtable URL that might be expired, use fallback
+    if (parsedUrl.hostname.includes('airtableusercontent.com')) {
+      // Check if the URL has expired tokens or is too complex
+      if (url.length > 200 || url.includes('/v3/u/')) {
+        console.warn('Using fallback for potentially expired Airtable URL:', url)
+        return fallback
+      }
+    }
+    
     return url
   } catch {
     return fallback

@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import Image from 'next/image'
 import { getCategoriesWithPatternCounts } from '@/lib/data'
 
 interface Category {
@@ -48,14 +47,9 @@ export default function Navigation() {
           {/* Logo and brand */}
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
-              <Image
-                src="https://v5.airtableusercontent.com/v3/u/45/45/1757952000000/gdL1tnSP8FlLTvJ4lYBbdQ/MR4HxHUsa3en7LUQYl73o5HezvuCkgz180uDmUFQU2MY4BFXQHpOvH08eGZMFwsz_h8FFvBEEVZoumSsOeye7571VvbNJEsf8RJm9DTFCRPPBmomfb8rQwzu1A8zdtMAEEKJ-4I-jrptdw0jeNQ68w/-0OxaI_KSDTqe5dnRc2jknBO2I_E0mniurZcXPX3M1E"
-                alt="Crochet911 Logo"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
-                priority
-              />
+              <div className="text-2xl font-bold text-blue-600">
+                Crochet911
+              </div>
             </Link>
           </div>
 

@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -9,13 +8,9 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
-              <Image
-                src="https://v5.airtableusercontent.com/v3/u/45/45/1757952000000/gdL1tnSP8FlLTvJ4lYBbdQ/MR4HxHUsa3en7LUQYl73o5HezvuCkgz180uDmUFQU2MY4BFXQHpOvH08eGZMFwsz_h8FFvBEEVZoumSsOeye7571VvbNJEsf8RJm9DTFCRPPBmomfb8rQwzu1A8zdtMAEEKJ-4I-jrptdw0jeNQ68w/-0OxaI_KSDTqe5dnRc2jknBO2I_E0mniurZcXPX3M1E"
-                alt="Crochet911 Logo"
-                width={150}
-                height={40}
-                className="h-10 w-auto"
-              />
+              <div className="text-2xl font-bold text-white">
+                Crochet911
+              </div>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">
               Your ultimate crochet patterns directory with thousands of free and premium designs for all skill levels.

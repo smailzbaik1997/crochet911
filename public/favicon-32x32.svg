@@ -1,0 +1,20 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <!-- 32x32 favicon - more detailed -->
+  <rect width="32" height="32" fill="#3B82F6"/>
+  
+  <!-- Crochet hook handle -->
+  <rect x="4" y="8" width="2" height="16" rx="1" fill="white"/>
+  
+  <!-- Crochet hook shaft -->
+  <rect x="6" y="15" width="20" height="2" rx="1" fill="white"/>
+  
+  <!-- Hook tip -->
+  <polygon points="26,15 28,16 26,17" fill="white"/>
+  
+  <!-- Yarn ball -->
+  <circle cx="8" cy="24" r="3" fill="#F59E0B"/>
+  <path d="M6 22 Q8 23 10 22 M6 24 Q8 25 10 24 M6 26 Q8 25 10 26" 
+        stroke="#FBBF24" 
+        stroke-width="0.5" 
+        fill="none"/>
+</svg>

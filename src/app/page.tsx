@@ -1,4 +1,3 @@
-import Image from 'next/image'
 import Link from 'next/link'
 import { Metadata } from 'next'
 import { getFeaturedPatterns, getMainCategories, getRecentPatterns } from '@/lib/data'
@@ -116,14 +115,9 @@ export default async function Home() {
         <div className="absolute inset-0 bg-gradient-to-br from-slate-900 via-slate-800 to-blue-900 opacity-90"></div>
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex justify-center mb-8">
-            <Image
-              src="https://v5.airtableusercontent.com/v3/u/45/45/1757952000000/gdL1tnSP8FlLTvJ4lYBbdQ/MR4HxHUsa3en7LUQYl73o5HezvuCkgz180uDmUFQU2MY4BFXQHpOvH08eGZMFwsz_h8FFvBEEVZoumSsOeye7571VvbNJEsf8RJm9DTFCRPPBmomfb8rQwzu1A8zdtMAEEKJ-4I-jrptdw0jeNQ68w/-0OxaI_KSDTqe5dnRc2jknBO2I_E0mniurZcXPX3M1E"
-              alt="Crochet911 Logo"
-              width={300}
-              height={80}
-              className="h-20 w-auto mb-4"
-              priority
-            />
+            <div className="text-6xl font-bold text-white">
+              Crochet911
+            </div>
           </div>
           <h1 className="text-5xl md:text-7xl font-bold mb-8 tracking-tight">
             Crochet Patterns Directory

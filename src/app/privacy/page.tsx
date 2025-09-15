@@ -1,6 +1,5 @@
 import { Metadata } from 'next'
 import Link from 'next/link'
-import Image from 'next/image'
 
 export const metadata: Metadata = {
   title: 'Privacy Policy | Crochet911',
@@ -18,13 +17,9 @@ export default function PrivacyPolicy() {
       <div className="bg-slate-50 py-16">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="flex justify-center mb-6">
-            <Image
-              src="https://v5.airtableusercontent.com/v3/u/45/45/1757952000000/gdL1tnSP8FlLTvJ4lYBbdQ/MR4HxHUsa3en7LUQYl73o5HezvuCkgz180uDmUFQU2MY4BFXQHpOvH08eGZMFwsz_h8FFvBEEVZoumSsOeye7571VvbNJEsf8RJm9DTFCRPPBmomfb8rQwzu1A8zdtMAEEKJ-4I-jrptdw0jeNQ68w/-0OxaI_KSDTqe5dnRc2jknBO2I_E0mniurZcXPX3M1E"
-              alt="Crochet911 Logo"
-              width={200}
-              height={53}
-              className="h-14 w-auto"
-            />
+            <div className="text-4xl font-bold text-slate-900">
+              Crochet911
+            </div>
           </div>
           <h1 className="text-4xl font-bold text-slate-900 mb-4">Privacy Policy</h1>
           <p className="text-lg text-slate-600">Last updated: {new Date().toLocaleDateString()}</p>

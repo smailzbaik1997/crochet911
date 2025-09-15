@@ -56,15 +56,31 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
-      // Add your own image hosting domains here
-      // For example, if you use Supabase Storage:
-      // {
-      //   protocol: 'https',
-      //   hostname: 'your-project.supabase.co',
-      //   port: '',
-      //   pathname: '/storage/v1/object/public/**',
-      // },
+      {
+        protocol: 'https',
+        hostname: 'dl.airtable.com',
+        port: '',
+        pathname: '/**',
+      },
+      {
+        protocol: 'https',
+        hostname: 'airtable.com',
+        port: '',
+        pathname: '/**',
+      },
+      // Add your Supabase project domain if you're using Supabase Storage
+      {
+        protocol: 'https',
+        hostname: 'kgjjawttstatplizzfxc.supabase.co',
+        port: '',
+        pathname: '/storage/v1/object/public/**',
+      },
     ],
+    // Add image optimization settings for better compatibility
+    unoptimized: false,
+    dangerouslyAllowSVG: true,
+    contentDispositionType: 'attachment',
+    contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
   },
   
   // SEO-optimized redirects from old URLs to new URLs
