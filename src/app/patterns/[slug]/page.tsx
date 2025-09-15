@@ -1,0 +1,273 @@
+import { notFound } from 'next/navigation'
+import { Metadata } from 'next'
+import Link from 'next/link'
+import Image from 'next/image'
+import { getPatternBySlug } from '@/lib/data'
+import { 
+  generatePatternStructuredData, 
+  generateBreadcrumbData, 
+  formatDifficulty, 
+  formatYarnWeight, 
+  getDifficultyColor,
+  getValidImageUrl,
+  generateMetaDescription
+} from '@/lib/utils'
+
+interface PageProps {
+  params: {
+    slug: string
+  }
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const pattern = await getPatternBySlug(params.slug)
+  
+  if (!pattern) {
+    return {
+      title: 'Pattern Not Found | Crochet911',
+      description: 'The requested pattern could not be found.'
+    }
+  }
+
+  return {
+    title: pattern.meta_title || `${pattern.title} - Free Crochet Pattern | Crochet911`,
+    description: generateMetaDescription(pattern),
+    keywords: pattern.keywords?.join(', '),
+    openGraph: {
+      title: pattern.title,
+      description: pattern.short_description || pattern.description,
+      type: 'article',
+      images: pattern.featured_image_url ? [pattern.featured_image_url] : [],
+      publishedTime: pattern.created_at,
+      modifiedTime: pattern.updated_at,
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: pattern.title,
+      description: pattern.short_description || pattern.description,
+      images: pattern.featured_image_url ? [pattern.featured_image_url] : [],
+    },
+  }
+}
+
+export default async function PatternPage({ params }: PageProps) {
+  const pattern = await getPatternBySlug(params.slug)
+
+  if (!pattern) {
+    notFound()
+  }
+
+  const breadcrumbPath = [
+    { name: 'Home', url: '/' },
+    { name: 'Crochet Patterns', url: '/crochetpatterns' },
+    ...(pattern.category ? [{ name: pattern.category.name, url: `/categories/${pattern.category.slug}` }] : []),
+    { name: pattern.title, url: `/crochetpatterns/${pattern.slug}` }
+  ]
+
+  const structuredData = generatePatternStructuredData(pattern)
+  const breadcrumbData = generateBreadcrumbData(breadcrumbPath)
+  const imageUrl = getValidImageUrl(pattern.featured_image_url)
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      {/* Structured Data */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbData) }}
+      />
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Breadcrumbs */}
+        <nav className="mb-8">
+          <ol className="flex items-center space-x-2 text-sm text-gray-500">
+            {breadcrumbPath.map((item, index) => (
+              <li key={index} className="flex items-center">
+                {index > 0 && (
+                  <svg className="w-4 h-4 mx-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+                  </svg>
+                )}
+                {index === breadcrumbPath.length - 1 ? (
+                  <span className="text-gray-900 font-medium">{item.name}</span>
+                ) : (
+                  <Link href={item.url} className="hover:text-pink-600 transition-colors">
+                    {item.name}
+                  </Link>
+                )}
+              </li>
+            ))}
+          </ol>
+        </nav>
+
+        <div className="bg-white rounded-lg shadow-lg overflow-hidden">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            {/* Image Section */}
+            <div className="relative">
+              <div className="aspect-square relative">
+                <Image
+                  src={imageUrl}
+                  alt={pattern.image_alt_text || `${pattern.title} crochet pattern`}
+                  fill
+                  className="object-cover"
+                  priority
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                />
+              </div>
+            </div>
+
+            {/* Pattern Details */}
+            <div className="p-8">
+              <div className="mb-6">
+                <h1 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+                  {pattern.title}
+                </h1>
+                
+                <div className="flex flex-wrap gap-2 mb-4">
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getDifficultyColor(pattern.difficulty)}`}>
+                    {formatDifficulty(pattern.difficulty)}
+                  </span>
+                  <span className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                    pattern.is_free ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+                  }`}>
+                    {pattern.is_free ? 'Free Pattern' : `$${pattern.price?.toFixed(2)}`}
+                  </span>
+                </div>
+
+                <p className="text-lg text-gray-700 mb-6">
+                  {pattern.short_description || pattern.description}
+                </p>
+              </div>
+
+              {/* Pattern Information */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                {pattern.yarn_weight && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Yarn Weight</h3>
+                    <p className="text-gray-700">{formatYarnWeight(pattern.yarn_weight)}</p>
+                  </div>
+                )}
+                
+                {pattern.hook_size && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Hook Size</h3>
+                    <p className="text-gray-700">{pattern.hook_size}</p>
+                  </div>
+                )}
+                
+                {pattern.finished_size && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Finished Size</h3>
+                    <p className="text-gray-700">{pattern.finished_size}</p>
+                  </div>
+                )}
+                
+                {pattern.time_to_complete && (
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-900 mb-1">Time to Complete</h3>
+                    <p className="text-gray-700">{pattern.time_to_complete}</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Designer & Category */}
+              <div className="flex flex-wrap items-center gap-4 mb-8 text-sm text-gray-600">
+                {pattern.designer && (
+                  <div>
+                    <span className="font-medium">Designer:</span>{' '}
+                    <Link 
+                      href={`/designers/${pattern.designer.slug}`}
+                      className="text-pink-600 hover:text-pink-700 transition-colors"
+                    >
+                      {pattern.designer.name}
+                    </Link>
+                  </div>
+                )}
+                {pattern.category && (
+                  <div>
+                    <span className="font-medium">Category:</span>{' '}
+                    <Link 
+                      href={`/categories/${pattern.category.slug}`}
+                      className="text-pink-600 hover:text-pink-700 transition-colors"
+                    >
+                      {pattern.category.name}
+                    </Link>
+                  </div>
+                )}
+              </div>
+
+              {/* Get Pattern Button */}
+              <div className="mb-6">
+                <a
+                  href={pattern.pattern_source_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="w-full bg-pink-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-pink-700 transition-colors flex items-center justify-center"
+                >
+                  Get This Pattern
+                  <svg className="ml-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+                {pattern.pattern_source_name && (
+                  <p className="text-center text-sm text-gray-500 mt-2">
+                    Pattern source: {pattern.pattern_source_name}
+                  </p>
+                )}
+              </div>
+
+              {/* Pattern Tags */}
+              {pattern.pattern_tags && pattern.pattern_tags.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold text-gray-900 mb-2">Tags</h3>
+                  <div className="flex flex-wrap gap-2">
+                    {pattern.pattern_tags.map(({ tag }: any) => (
+                      <span
+                        key={tag.id}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
+                        style={{ backgroundColor: tag.color ? `${tag.color}20` : undefined }}
+                      >
+                        {tag.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Full Description */}
+          {pattern.description !== pattern.short_description && (
+            <div className="p-8 border-t border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">About This Pattern</h2>
+              <div className="prose max-w-none text-gray-700">
+                {pattern.description.split('\n').map((paragraph: string, index: number) => (
+                  <p key={index} className="mb-4">
+                    {paragraph}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Yarn Details */}
+          {pattern.yarn_details && (
+            <div className="p-8 border-t border-gray-200">
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">Yarn & Materials</h2>
+              <div className="prose max-w-none text-gray-700">
+                {pattern.yarn_details.split('\n').map((line: string, index: number) => (
+                  <p key={index} className="mb-2">
+                    {line}
+                  </p>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  )
+}
