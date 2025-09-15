@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import Link from 'next/link'
-import { getCategoriesWithPatternCounts } from '@/lib/data'
+import { useRealtimeCategories } from '@/lib/realtime-hooks'
 
 interface Category {
   id: string
@@ -16,18 +16,12 @@ interface Category {
 }
 
 export default function Navigation() {
-  const [categories, setCategories] = useState<Category[]>([])
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [openDropdown, setOpenDropdown] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
 
-  useEffect(() => {
-    async function loadCategories() {
-      const data = await getCategoriesWithPatternCounts()
-      setCategories(data)
-    }
-    loadCategories()
-  }, [])
+  // Use real-time hook for categories
+  const { categories, loading: categoriesLoading } = useRealtimeCategories()
 
   const toggleDropdown = (categorySlug: string) => {
     setOpenDropdown(openDropdown === categorySlug ? null : categorySlug)
@@ -79,33 +73,42 @@ export default function Navigation() {
                     <span className="text-xs text-slate-500 bg-white px-3 py-1 rounded-full font-medium shadow-sm">Most Searched</span>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    {categories
-                      .filter(cat => (cat.pattern_count || 0) > 0)
-                      .slice(0, 6)
-                      .map((category) => (
-                        <Link
-                          key={category.id}
-                          href={`/categories/${category.slug}`}
-                          className="group/item flex items-center justify-between p-4 rounded-xl hover:bg-white transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
-                        >
-                          <div className="flex-1">
-                            <div className="text-sm font-semibold text-slate-900 group-hover/item:text-blue-600 transition-colors mb-1">
-                              {category.name}
+                    {categoriesLoading ? (
+                      // Loading skeleton for popular categories
+                      Array.from({ length: 6 }).map((_, index) => (
+                        <div key={index} className="p-4 rounded-xl bg-slate-200 animate-pulse">
+                          <div className="h-4 bg-slate-300 rounded mb-2"></div>
+                          <div className="h-3 bg-slate-300 rounded w-1/2"></div>
+                        </div>
+                      ))
+                    ) : (
+                      categories
+                        .filter(cat => (cat.pattern_count || 0) > 0)
+                        .slice(0, 6)
+                        .map((category) => (
+                          <Link
+                            key={category.id}
+                            href={`/categories/${category.slug}`}
+                            className="group/item flex items-center justify-between p-4 rounded-xl hover:bg-white transition-all duration-200 border border-transparent hover:border-slate-200 hover:shadow-md"
+                          >
+                            <div className="flex-1">
+                              <div className="text-sm font-semibold text-slate-900 group-hover/item:text-blue-600 transition-colors mb-1">
+                                {category.name}
+                              </div>
+                              {category.pattern_count && category.pattern_count > 0 && (
+                                <div className="text-xs text-slate-600">
+                                  {category.pattern_count} pattern{category.pattern_count !== 1 ? 's' : ''}
+                                </div>
+                              )}
                             </div>
                             {category.pattern_count && category.pattern_count > 0 && (
-                              <div className="text-xs text-slate-600">
-                                {category.pattern_count} pattern{category.pattern_count !== 1 ? 's' : ''}
+                              <div className="ml-4 bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-full font-semibold group-hover/item:bg-blue-600 group-hover/item:text-white transition-all duration-200">
+                                {category.pattern_count}
                               </div>
                             )}
-                          </div>
-                          {category.pattern_count && category.pattern_count > 0 && (
-                            <div className="ml-4 bg-blue-100 text-blue-700 text-xs px-3 py-1.5 rounded-full font-semibold group-hover/item:bg-blue-600 group-hover/item:text-white transition-all duration-200">
-                              {category.pattern_count}
-                            </div>
-                          )}
-                        </Link>
-                      ))
-                    }
+                          </Link>
+                        ))
+                    )}
                   </div>
                 </div>
                 
@@ -121,44 +124,57 @@ export default function Navigation() {
                     </Link>
                   </div>
                   <div className="grid grid-cols-3 gap-6">
-                    {categories.slice(0, 9).map((category) => (
-                      <div key={category.id} className="space-y-3">
-                        <Link
-                          href={`/categories/${category.slug}`}
-                          className="group block text-sm font-semibold text-slate-800 hover:text-blue-600 transition-colors duration-200"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="group-hover:underline">{category.name}</span>
-                            {category.pattern_count && category.pattern_count > 0 && (
-                              <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
-                                {category.pattern_count}
-                              </span>
-                            )}
-                          </div>
-                        </Link>
-                        {category.subcategories && category.subcategories.length > 0 && (
+                    {categoriesLoading ? (
+                      // Loading skeleton for all categories
+                      Array.from({ length: 9 }).map((_, index) => (
+                        <div key={index} className="space-y-3">
+                          <div className="h-4 bg-slate-200 rounded animate-pulse"></div>
                           <div className="space-y-2 pl-4 border-l-2 border-slate-100">
-                            {category.subcategories
-                              .filter(sub => (sub.pattern_count || 0) > 0)
-                              .slice(0, 3)
-                              .map((sub) => (
-                              <Link
-                                key={sub.id}
-                                href={`/categories/${sub.slug}`}
-                                className="block text-xs text-slate-600 hover:text-slate-800 transition-colors duration-200 hover:underline"
-                              >
-                                <div className="flex items-center justify-between">
-                                  <span>{sub.name}</span>
-                                  {sub.pattern_count && sub.pattern_count > 0 && (
-                                    <span className="ml-2 text-xs text-slate-400">({sub.pattern_count})</span>
-                                  )}
-                                </div>
-                              </Link>
-                            ))}
+                            <div className="h-3 bg-slate-200 rounded w-3/4 animate-pulse"></div>
+                            <div className="h-3 bg-slate-200 rounded w-1/2 animate-pulse"></div>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                        </div>
+                      ))
+                    ) : (
+                      categories.slice(0, 9).map((category) => (
+                        <div key={category.id} className="space-y-3">
+                          <Link
+                            href={`/categories/${category.slug}`}
+                            className="group block text-sm font-semibold text-slate-800 hover:text-blue-600 transition-colors duration-200"
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className="group-hover:underline">{category.name}</span>
+                              {category.pattern_count && category.pattern_count > 0 && (
+                                <span className="ml-2 text-xs text-slate-400 bg-slate-100 px-2 py-0.5 rounded-full">
+                                  {category.pattern_count}
+                                </span>
+                              )}
+                            </div>
+                          </Link>
+                          {category.subcategories && category.subcategories.length > 0 && (
+                            <div className="space-y-2 pl-4 border-l-2 border-slate-100">
+                              {category.subcategories
+                                .filter(sub => (sub.pattern_count || 0) > 0)
+                                .slice(0, 3)
+                                .map((sub) => (
+                                <Link
+                                  key={sub.id}
+                                  href={`/categories/${sub.slug}`}
+                                  className="block text-xs text-slate-600 hover:text-slate-800 transition-colors duration-200 hover:underline"
+                                >
+                                  <div className="flex items-center justify-between">
+                                    <span>{sub.name}</span>
+                                    {sub.pattern_count && sub.pattern_count > 0 && (
+                                      <span className="ml-2 text-xs text-slate-400">({sub.pattern_count})</span>
+                                    )}
+                                  </div>
+                                </Link>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))
+                    )}
                   </div>
                 </div>
               </div>
@@ -237,67 +253,76 @@ export default function Navigation() {
                 <div className="px-3 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">Popular Categories</span>
                 </div>
-                {categories
-                  .filter(cat => (cat.pattern_count || 0) > 0)
-                  .slice(0, 6)
-                  .map((category) => (
-                  <div key={category.id}>
-                    <button
-                      onClick={() => toggleDropdown(category.slug)}
-                      className="w-full text-left text-slate-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium flex items-center justify-between"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <span>{category.name}</span>
-                        {category.pattern_count && category.pattern_count > 0 && (
-                          <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
-                            {category.pattern_count}
-                          </span>
-                        )}
-                      </div>
-                      <svg 
-                        className={`h-4 w-4 transform transition-transform ${openDropdown === category.slug ? 'rotate-180' : ''}`} 
-                        fill="none" 
-                        stroke="currentColor" 
-                        viewBox="0 0 24 24"
+                {categoriesLoading ? (
+                  // Loading skeleton for mobile categories
+                  Array.from({ length: 6 }).map((_, index) => (
+                    <div key={index} className="px-3 py-2">
+                      <div className="h-6 bg-slate-200 rounded animate-pulse"></div>
+                    </div>
+                  ))
+                ) : (
+                  categories
+                    .filter(cat => (cat.pattern_count || 0) > 0)
+                    .slice(0, 6)
+                    .map((category) => (
+                    <div key={category.id}>
+                      <button
+                        onClick={() => toggleDropdown(category.slug)}
+                        className="w-full text-left text-slate-700 hover:text-blue-600 px-3 py-2 rounded-md text-base font-medium flex items-center justify-between"
                       >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                      </svg>
-                    </button>
-                    
-                    {openDropdown === category.slug && (
-                      <div className="ml-4 space-y-1 bg-white rounded-md border border-slate-200 mt-1">
-                        <Link
-                          href={`/categories/${category.slug}`}
-                          className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 px-3 py-2"
-                          onClick={() => setIsMenuOpen(false)}
-                        >
-                          <span>All {category.name}</span>
+                        <div className="flex items-center space-x-2">
+                          <span>{category.name}</span>
                           {category.pattern_count && category.pattern_count > 0 && (
-                            <span className="text-xs text-slate-400">({category.pattern_count})</span>
+                            <span className="bg-blue-100 text-blue-800 text-xs px-2 py-1 rounded-full font-medium">
+                              {category.pattern_count}
+                            </span>
                           )}
-                        </Link>
-                        {category.subcategories && 
-                          category.subcategories
-                            .filter(sub => (sub.pattern_count || 0) > 0)
-                            .slice(0, 5)
-                            .map((sub) => (
-                            <Link
-                              key={sub.id}
-                              href={`/categories/${sub.slug}`}
-                              className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 px-3 py-2"
-                              onClick={() => setIsMenuOpen(false)}
-                            >
-                              <span>{sub.name}</span>
-                              {sub.pattern_count && sub.pattern_count > 0 && (
-                                <span className="text-xs text-slate-400">({sub.pattern_count})</span>
-                              )}
-                            </Link>
-                          ))
-                        }
-                      </div>
-                    )}
-                  </div>
-                ))}
+                        </div>
+                        <svg 
+                          className={`h-4 w-4 transform transition-transform ${openDropdown === category.slug ? 'rotate-180' : ''}`} 
+                          fill="none" 
+                          stroke="currentColor" 
+                          viewBox="0 0 24 24"
+                        >
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                        </svg>
+                      </button>
+                      
+                      {openDropdown === category.slug && (
+                        <div className="ml-4 space-y-1 bg-white rounded-md border border-slate-200 mt-1">
+                          <Link
+                            href={`/categories/${category.slug}`}
+                            className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 px-3 py-2"
+                            onClick={() => setIsMenuOpen(false)}
+                          >
+                            <span>All {category.name}</span>
+                            {category.pattern_count && category.pattern_count > 0 && (
+                              <span className="text-xs text-slate-400">({category.pattern_count})</span>
+                            )}
+                          </Link>
+                          {category.subcategories && 
+                            category.subcategories
+                              .filter(sub => (sub.pattern_count || 0) > 0)
+                              .slice(0, 5)
+                              .map((sub) => (
+                              <Link
+                                key={sub.id}
+                                href={`/categories/${sub.slug}`}
+                                className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 px-3 py-2"
+                                onClick={() => setIsMenuOpen(false)}
+                              >
+                                <span>{sub.name}</span>
+                                {sub.pattern_count && sub.pattern_count > 0 && (
+                                  <span className="text-xs text-slate-400">({sub.pattern_count})</span>
+                                )}
+                              </Link>
+                            ))
+                          }
+                        </div>
+                      )}
+                    </div>
+                  ))
+                )}
               </div>
               
               <Link 

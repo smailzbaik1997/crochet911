@@ -1,8 +1,8 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, useMemo } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { getAllPatterns, searchPatterns } from '@/lib/data'
+import { useRealtimePatterns, useRealtimeSearch } from '@/lib/realtime-hooks'
 import PatternCard from '@/components/PatternCard'
 import Link from 'next/link'
 
@@ -33,8 +33,6 @@ function PatternsContent() {
   const searchParams = useSearchParams()
   const searchQuery = searchParams.get('search')
   
-  const [patterns, setPatterns] = useState<Pattern[]>([])
-  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     difficulty: '',
     type: '',
@@ -43,46 +41,33 @@ function PatternsContent() {
   const [currentPage, setCurrentPage] = useState(1)
   const patternsPerPage = 24
 
-  useEffect(() => {
-    async function fetchPatterns() {
-      setLoading(true)
-      try {
-        let data: Pattern[] = []
-        
-        if (searchQuery) {
-          // If there's a search query, use search function
-          data = await searchPatterns(searchQuery, 100)
-        } else {
-          // Otherwise use regular filtering
-          const filterOptions: any = {
-            sort: filters.sort,
-            limit: 100 // Get more patterns for client-side filtering
-          }
-
-          if (filters.difficulty) {
-            filterOptions.difficulty = filters.difficulty
-          }
-
-          if (filters.type === 'free') {
-            filterOptions.is_free = true
-          } else if (filters.type === 'premium') {
-            filterOptions.is_free = false
-          }
-
-          data = await getAllPatterns(filterOptions)
-        }
-        
-        setPatterns(data)
-      } catch (error) {
-        console.error('Error fetching patterns:', error)
-        setPatterns([])
-      } finally {
-        setLoading(false)
-      }
+  // Convert filters to real-time hook format
+  const hookFilters = useMemo(() => {
+    const result: any = {
+      sort: filters.sort,
+      limit: 500 // Get more patterns for client-side filtering
     }
 
-    fetchPatterns()
-  }, [filters, searchQuery])
+    if (filters.difficulty) {
+      result.difficulty = filters.difficulty
+    }
+
+    if (filters.type === 'free') {
+      result.is_free = true
+    } else if (filters.type === 'premium') {
+      result.is_free = false
+    }
+
+    return result
+  }, [filters])
+
+  // Use appropriate real-time hook based on search query
+  const { patterns: searchPatterns, loading: searchLoading } = useRealtimeSearch(searchQuery || '', 100)
+  const { patterns: allPatterns, loading: allLoading } = useRealtimePatterns(hookFilters)
+  
+  // Determine which patterns and loading state to use
+  const patterns = searchQuery ? searchPatterns : allPatterns
+  const loading = searchQuery ? searchLoading : allLoading
 
   const handleFilterChange = (filterType: string, value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }))

@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { getAllPatterns } from '@/lib/data'
+import { useState, useMemo } from 'react'
+import { useRealtimePatterns } from '@/lib/realtime-hooks'
 import PatternCard from '@/components/PatternCard'
 import Link from 'next/link'
 
@@ -28,8 +28,6 @@ interface Pattern {
 }
 
 export default function PatternsPage() {
-  const [patterns, setPatterns] = useState<Pattern[]>([])
-  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     difficulty: '',
     type: '',
@@ -38,44 +36,35 @@ export default function PatternsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const patternsPerPage = 24
 
-  useEffect(() => {
-    async function fetchPatterns() {
-      setLoading(true)
-      try {
-        const filterOptions: any = {
-          sort: filters.sort,
-          limit: 100 // Get more patterns for client-side filtering
-        }
-
-        if (filters.difficulty) {
-          filterOptions.difficulty = filters.difficulty
-        }
-
-        if (filters.type === 'free') {
-          filterOptions.is_free = true
-        } else if (filters.type === 'premium') {
-          filterOptions.is_free = false
-        }
-
-        const data = await getAllPatterns(filterOptions)
-        setPatterns(data)
-      } catch (error) {
-        console.error('Error fetching patterns:', error)
-        setPatterns([])
-      } finally {
-        setLoading(false)
-      }
+  // Convert filters to real-time hook format
+  const hookFilters = useMemo(() => {
+    const result: any = {
+      sort: filters.sort,
+      limit: 500 // Get more patterns for client-side filtering
     }
 
-    fetchPatterns()
+    if (filters.difficulty) {
+      result.difficulty = filters.difficulty
+    }
+
+    if (filters.type === 'free') {
+      result.is_free = true
+    } else if (filters.type === 'premium') {
+      result.is_free = false
+    }
+
+    return result
   }, [filters])
+
+  // Use real-time hook for patterns
+  const { patterns, loading } = useRealtimePatterns(hookFilters)
 
   const handleFilterChange = (filterType: string, value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }))
     setCurrentPage(1) // Reset to first page when filtering
   }
 
-  // Calculate pagination
+  // Calculate pagination with real-time patterns
   const totalPatterns = patterns.length
   const totalPages = Math.ceil(totalPatterns / patternsPerPage)
   const startIndex = (currentPage - 1) * patternsPerPage

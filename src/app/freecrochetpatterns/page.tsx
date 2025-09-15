@@ -1,7 +1,7 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { getAllPatterns } from '@/lib/data'
+import { useState, useMemo } from 'react'
+import { useRealtimePatterns } from '@/lib/realtime-hooks'
 import PatternCard from '@/components/PatternCard'
 import Link from 'next/link'
 
@@ -28,8 +28,6 @@ interface Pattern {
 }
 
 export default function FreeCrochetPatternsPage() {
-  const [patterns, setPatterns] = useState<Pattern[]>([])
-  const [loading, setLoading] = useState(true)
   const [filters, setFilters] = useState({
     difficulty: '',
     category: '',
@@ -38,39 +36,30 @@ export default function FreeCrochetPatternsPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const patternsPerPage = 24
 
-  useEffect(() => {
-    async function fetchFreePatterns() {
-      setLoading(true)
-      try {
-        const filterOptions: any = {
-          sort: filters.sort,
-          is_free: true, // Only show free patterns
-          limit: 200 // Get more free patterns
-        }
-
-        if (filters.difficulty) {
-          filterOptions.difficulty = filters.difficulty
-        }
-
-        const data = await getAllPatterns(filterOptions)
-        setPatterns(data)
-      } catch (error) {
-        console.error('Error fetching free patterns:', error)
-        setPatterns([])
-      } finally {
-        setLoading(false)
-      }
+  // Convert filters to real-time hook format with free patterns only
+  const hookFilters = useMemo(() => {
+    const result: any = {
+      sort: filters.sort,
+      is_free: true, // Only show free patterns
+      limit: 500 // Get more free patterns
     }
 
-    fetchFreePatterns()
+    if (filters.difficulty) {
+      result.difficulty = filters.difficulty
+    }
+
+    return result
   }, [filters])
+
+  // Use real-time hook for free patterns
+  const { patterns, loading } = useRealtimePatterns(hookFilters)
 
   const handleFilterChange = (filterType: string, value: string) => {
     setFilters(prev => ({ ...prev, [filterType]: value }))
     setCurrentPage(1) // Reset to first page when filtering
   }
 
-  // Calculate pagination
+  // Calculate pagination with real-time patterns
   const totalPatterns = patterns.length
   const totalPages = Math.ceil(totalPatterns / patternsPerPage)
   const startIndex = (currentPage - 1) * patternsPerPage

@@ -1,9 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import { Metadata } from 'next'
-import { getFeaturedPatterns, getMainCategories, getRecentPatterns } from '@/lib/data'
 import PatternCard from '@/components/PatternCard'
 import HomepageFAQ from '@/components/HomepageFAQ'
 import PatternSearchHero from '@/components/PatternSearchHero'
+import { useRealtimeFeaturedPatterns, useRealtimeRecentPatterns, useRealtimeCategories } from '@/lib/realtime-hooks'
 
 // SEO-optimized metadata for homepage
 export const metadata: Metadata = {
@@ -48,13 +50,11 @@ export const metadata: Metadata = {
   },
 }
 
-export default async function Home() {
-  // Fetch data for the homepage
-  const [featuredPatterns, mainCategories, recentPatterns] = await Promise.all([
-    getFeaturedPatterns(6),
-    getMainCategories(),
-    getRecentPatterns(8)
-  ])
+export default function Home() {
+  // Use real-time hooks for live data
+  const { patterns: featuredPatterns, loading: featuredLoading } = useRealtimeFeaturedPatterns(6)
+  const { categories: mainCategories, loading: categoriesLoading } = useRealtimeCategories()
+  const { patterns: recentPatterns, loading: recentLoading } = useRealtimeRecentPatterns(8)
 
   // Generate structured data for homepage
   const websiteStructuredData = {
@@ -201,7 +201,12 @@ export default async function Home() {
             </p>
           </div>
 
-          {featuredPatterns.length > 0 ? (
+          {featuredLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-slate-600">Loading featured patterns...</p>
+            </div>
+          ) : featuredPatterns.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
               {featuredPatterns.map((pattern, index) => (
                 <PatternCard key={pattern.id} pattern={pattern} priority={index < 3} />
@@ -240,7 +245,12 @@ export default async function Home() {
             </p>
           </div>
 
-          {recentPatterns.length > 0 ? (
+          {recentLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-slate-600">Loading recent patterns...</p>
+            </div>
+          ) : recentPatterns.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
               {recentPatterns.map((pattern) => (
                 <PatternCard key={pattern.id} pattern={pattern} />
@@ -276,7 +286,12 @@ export default async function Home() {
             </p>
           </div>
 
-          {mainCategories.length > 0 ? (
+          {categoriesLoading ? (
+            <div className="text-center py-12">
+              <div className="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              <p className="mt-4 text-slate-600">Loading categories...</p>
+            </div>
+          ) : mainCategories.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-12">
               {mainCategories.slice(0, 8).map((category) => (
                 <Link
@@ -286,6 +301,11 @@ export default async function Home() {
                 >
                   <h3 className="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors mb-2">
                     {category.name}
+                    {category.pattern_count && category.pattern_count > 0 && (
+                      <span className="ml-2 text-xs text-blue-600 bg-blue-100 px-2 py-1 rounded-full">
+                        {category.pattern_count}
+                      </span>
+                    )}
                   </h3>
                   {category.description && (
                     <p className="text-sm text-slate-600 line-clamp-2">

@@ -174,9 +174,13 @@ export function generateMetaDescription(pattern: any): string {
   return meta.substring(0, maxLength)
 }
 
-// Validate image URL with better fallback handling
+// Validate image URL with better fallback handling and debugging
 export function getValidImageUrl(url: string | null, fallback: string = 'https://via.placeholder.com/400x300/e2e8f0/64748b?text=Crochet+Pattern'): string {
-  if (!url) return fallback
+  // If no URL provided, use fallback
+  if (!url) {
+    console.log('No image URL provided, using fallback')
+    return fallback
+  }
   
   // Check if it's a valid URL
   try {
@@ -186,13 +190,31 @@ export function getValidImageUrl(url: string | null, fallback: string = 'https:/
     if (parsedUrl.hostname.includes('airtableusercontent.com')) {
       // Check if the URL has expired tokens or is too complex
       if (url.length > 200 || url.includes('/v3/u/')) {
-        console.warn('Using fallback for potentially expired Airtable URL:', url)
+        console.warn('Using fallback for potentially expired Airtable URL:', url.substring(0, 100) + '...')
         return fallback
       }
     }
     
+    // Additional validation for common image hosts
+    const validHosts = [
+      'images.unsplash.com',
+      'unsplash.com', 
+      'cdn.pixabay.com',
+      'res.cloudinary.com',
+      'via.placeholder.com',
+      'supabase.co',
+      'amazonaws.com'
+    ]
+    
+    const isValidHost = validHosts.some(host => parsedUrl.hostname.includes(host))
+    if (!isValidHost && parsedUrl.hostname.includes('airtableusercontent.com')) {
+      console.warn('Using fallback for untrusted image host:', parsedUrl.hostname)
+      return fallback
+    }
+    
     return url
-  } catch {
+  } catch (error) {
+    console.error('Invalid image URL format:', url, error)
     return fallback
   }
 }

@@ -1,8 +1,11 @@
+'use client'
+
 import { Metadata } from 'next'
 import Link from 'next/link'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
 import { getPatternBySlug } from '@/lib/data'
+import { useRealtimePattern } from '@/lib/realtime-hooks'
 import { 
   generatePatternStructuredData, 
   generateBreadcrumbData, 
@@ -82,10 +85,22 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   }
 }
 
-export default async function CrochetPatternPage({ params }: PageProps) {
-  const pattern = await getPatternBySlug(params.slug)
+// Client component for the pattern page content
+function PatternPageContent({ slug }: { slug: string }) {
+  const { pattern, loading, error } = useRealtimePattern(slug)
 
-  if (!pattern) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <p className="mt-4 text-slate-600">Loading pattern...</p>
+        </div>
+      </div>
+    )
+  }
+
+  if (error || !pattern) {
     notFound()
   }
 
@@ -186,40 +201,40 @@ export default async function CrochetPatternPage({ params }: PageProps) {
 
               {/* Pattern Information */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                {pattern.yarn_weight && (
+                {(pattern as any).yarn_weight && (
                   <div className="bg-slate-50 p-4 rounded-lg">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">Yarn Weight</h3>
-                    <p className="text-gray-700">{formatYarnWeight(pattern.yarn_weight)}</p>
+                    <p className="text-gray-700">{formatYarnWeight((pattern as any).yarn_weight)}</p>
                   </div>
                 )}
                 
-                {pattern.hook_size && (
+                {(pattern as any).hook_size && (
                   <div className="bg-slate-50 p-4 rounded-lg">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">Crochet Hook Size</h3>
-                    <p className="text-gray-700">{pattern.hook_size}</p>
+                    <p className="text-gray-700">{(pattern as any).hook_size}</p>
                   </div>
                 )}
                 
-                {pattern.finished_size && (
+                {(pattern as any).finished_size && (
                   <div className="bg-slate-50 p-4 rounded-lg">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">Finished Size</h3>
-                    <p className="text-gray-700">{pattern.finished_size}</p>
+                    <p className="text-gray-700">{(pattern as any).finished_size}</p>
                   </div>
                 )}
                 
-                {pattern.time_to_complete && (
+                {(pattern as any).time_to_complete && (
                   <div className="bg-slate-50 p-4 rounded-lg">
                     <h3 className="text-sm font-semibold text-gray-900 mb-1">Time to Complete</h3>
-                    <p className="text-gray-700">{pattern.time_to_complete}</p>
+                    <p className="text-gray-700">{(pattern as any).time_to_complete}</p>
                   </div>
                 )}
               </div>
 
               {/* Get Pattern Button - Missing Link from Database */}
-              {pattern.pattern_source_url && (
+              {(pattern as any).pattern_source_url && (
                 <div className="mb-6">
                   <a
-                    href={pattern.pattern_source_url}
+                    href={(pattern as any).pattern_source_url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="w-full bg-blue-600 text-white py-4 px-6 rounded-lg font-semibold text-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
@@ -229,20 +244,20 @@ export default async function CrochetPatternPage({ params }: PageProps) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
                     </svg>
                   </a>
-                  {pattern.pattern_source_name && (
+                  {(pattern as any).pattern_source_name && (
                     <p className="text-center text-sm text-gray-500 mt-2">
-                      Pattern source: {pattern.pattern_source_name}
+                      Pattern source: {(pattern as any).pattern_source_name}
                     </p>
                   )}
                 </div>
               )}
 
               {/* Pattern Tags */}
-              {pattern.pattern_tags && pattern.pattern_tags.length > 0 && (
+              {(pattern as any).pattern_tags && (pattern as any).pattern_tags.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold text-gray-900 mb-2">Pattern Tags</h3>
                   <div className="flex flex-wrap gap-2">
-                    {pattern.pattern_tags.map(({ tag }: PatternTag) => (
+                    {(pattern as any).pattern_tags.map(({ tag }: any) => (
                       <span
                         key={tag.id}
                         className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800"
@@ -272,11 +287,11 @@ export default async function CrochetPatternPage({ params }: PageProps) {
           )}
 
           {/* Yarn Details */}
-          {pattern.yarn_details && (
+          {(pattern as any).yarn_details && (
             <div className="p-8 border-t border-gray-200">
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Yarn & Materials for This Crochet Pattern</h2>
               <div className="prose max-w-none text-gray-700">
-                {pattern.yarn_details.split('\n').map((line: string, index: number) => (
+                {(pattern as any).yarn_details.split('\n').map((line: string, index: number) => (
                   <p key={index} className="mb-2 leading-relaxed">
                     {line}
                   </p>
@@ -313,4 +328,8 @@ export default async function CrochetPatternPage({ params }: PageProps) {
       </div>
     </div>
   )
+}
+
+export default function CrochetPatternPage({ params }: PageProps) {
+  return <PatternPageContent slug={params.slug} />
 }

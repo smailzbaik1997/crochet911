@@ -7,45 +7,39 @@
   "images": {
     "sizes": [16, 32, 48, 64, 96, 128, 256, 384],
     "formats": ["image/avif", "image/webp"],
+    "domains": [],
     "remotePatterns": [
       {
         "protocol": "https",
-        "hostname": "images.unsplash.com"
+        "hostname": "**"
       },
       {
-        "protocol": "https",
-        "hostname": "unsplash.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "cdn.pixabay.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "res.cloudinary.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "via.placeholder.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "v5.airtableusercontent.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "dl.airtable.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "airtable.com"
-      },
-      {
-        "protocol": "https",
-        "hostname": "kgjjawttstatplizzfxc.supabase.co"
+        "protocol": "http",
+        "hostname": "**"
       }
-    ]
+    ],
+    "dangerouslyAllowSVG": true,
+    "contentSecurityPolicy": "default-src 'self'; script-src 'none'; sandbox;"
   },
+  "headers": [
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "X-Frame-Options",
+          "value": "SAMEORIGIN"
+        },
+        {
+          "key": "Content-Security-Policy",
+          "value": "frame-src 'self' https: http: data:; frame-ancestors 'self' https: http:; img-src 'self' https: http: data: blob:;"
+        },
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        }
+      ]
+    }
+  ],
   "rewrites": [
     {
       "source": "/patterns/:path*",

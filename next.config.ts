@@ -20,67 +20,48 @@ const nextConfig: NextConfig = {
   },
   images: {
     remotePatterns: [
+      // Allow all HTTPS domains
       {
         protocol: 'https',
-        hostname: 'images.unsplash.com',
+        hostname: '**',
         port: '',
         pathname: '/**',
       },
+      // Allow all HTTP domains (for development)
       {
-        protocol: 'https',
-        hostname: 'unsplash.com',
+        protocol: 'http',
+        hostname: '**',
         port: '',
         pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'cdn.pixabay.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'res.cloudinary.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'via.placeholder.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'v5.airtableusercontent.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'dl.airtable.com',
-        port: '',
-        pathname: '/**',
-      },
-      {
-        protocol: 'https',
-        hostname: 'airtable.com',
-        port: '',
-        pathname: '/**',
-      },
-      // Add your Supabase project domain if you're using Supabase Storage
-      {
-        protocol: 'https',
-        hostname: 'kgjjawttstatplizzfxc.supabase.co',
-        port: '',
-        pathname: '/storage/v1/object/public/**',
       },
     ],
-    // Add image optimization settings for better compatibility
+    // Allow all image formats and optimize for Vercel deployment
+    formats: ['image/avif', 'image/webp'],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
     unoptimized: false,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+  },
+  
+  // Configure headers for iframe support and security
+  async headers() {
+    return [
+      {
+        source: '/(.*)',
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'SAMEORIGIN',
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-src 'self' https: http: data:; frame-ancestors 'self' https: http:;",
+          },
+        ],
+      },
+    ]
   },
   
   // SEO-optimized redirects from old URLs to new URLs
