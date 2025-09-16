@@ -3,6 +3,7 @@ import { Poppins } from "next/font/google";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Footer";
+import GoogleAnalytics from "@/components/GoogleAnalytics";
 
 const poppins = Poppins({
   variable: "--font-poppins",
@@ -108,6 +109,7 @@ export default function RootLayout({
         className={`${poppins.variable} font-sans antialiased`}
         suppressHydrationWarning={true}
       >
+        <GoogleAnalytics />
         <Navigation />
         <main>{children}</main>
         <Footer />

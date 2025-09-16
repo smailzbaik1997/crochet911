@@ -8,20 +8,18 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           {/* Logo and Description */}
           <div className="md:col-span-1">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-6">
               <Image
-                src="/logocrochet.webp"
-                alt="Crochet911 Logo"
-                width={32}
-                height={32}
-                className="mr-3"
+                src="/logocrochet911.webp"
+                alt="Crochet911"
+                width={200}
+                height={67}
+                className="h-auto w-auto max-w-[200px] filter brightness-110"
+                quality={95}
               />
-              <div className="text-2xl font-bold text-white">
-                Crochet911
-              </div>
             </div>
             <p className="text-slate-300 text-sm leading-relaxed">
-              Your ultimate crochet patterns directory with thousands of free and premium designs for all skill levels.
+              Your ultimate crochet patterns directory with thousands of free and premium crochet patterns for all skill levels.
             </p>
           </div>
 

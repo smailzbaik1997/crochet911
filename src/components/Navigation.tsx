@@ -43,16 +43,13 @@ export default function Navigation() {
           <div className="flex items-center">
             <Link href="/" className="flex-shrink-0 flex items-center">
               <Image
-                src="/logocrochet.webp"
-                alt="Crochet911 Logo"
-                width={40}
-                height={40}
-                className="mr-3"
+                src="/logocrochet911.webp"
+                alt="Crochet911"
+                width={200}
+                height={67}
+                className="h-auto w-auto max-w-[200px]"
                 priority
               />
-              <div className="text-2xl font-bold text-blue-600">
-                Crochet911
-              </div>
             </Link>
           </div>
 
