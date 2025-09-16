@@ -21,6 +21,13 @@ const nextConfig: NextConfig = {
   
   images: {
     remotePatterns: [
+      // Explicitly allow Airtable content
+      {
+        protocol: 'https',
+        hostname: 'v5.airtableusercontent.com',
+        port: '',
+        pathname: '/**',
+      },
       // Allow ALL external domains with HTTPS
       {
         protocol: 'https',
@@ -46,8 +53,8 @@ const nextConfig: NextConfig = {
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
     minimumCacheTTL: 60,
-    // Remove specific domains to allow all external sources
-    domains: [],
+    // Include Airtable domain explicitly
+    domains: ['v5.airtableusercontent.com'],
   },
   
   // Configure headers for iframe support and security
