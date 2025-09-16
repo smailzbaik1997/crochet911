@@ -21,21 +21,14 @@ const nextConfig: NextConfig = {
   
   images: {
     remotePatterns: [
-      // Explicitly allow amimore.ru
-      {
-        protocol: 'https',
-        hostname: 'amimore.ru',
-        port: '',
-        pathname: '/**',
-      },
-      // Allow all HTTPS domains
+      // Allow ALL external domains with HTTPS
       {
         protocol: 'https',
         hostname: '**',
         port: '',
         pathname: '/**',
       },
-      // Allow all HTTP domains (for development)
+      // Allow ALL external domains with HTTP (for development)
       {
         protocol: 'http',
         hostname: '**',
@@ -44,12 +37,17 @@ const nextConfig: NextConfig = {
       },
     ],
     formats: ['image/avif', 'image/webp'],
-    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
-    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840],
+    // Expanded size ranges for maximum flexibility
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384, 512, 640, 750, 828],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920, 2048, 3840, 4096],
+    // Allow unoptimized images for maximum compatibility
     unoptimized: false,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
     contentSecurityPolicy: "default-src 'self'; script-src 'none'; sandbox;",
+    minimumCacheTTL: 60,
+    // Remove specific domains to allow all external sources
+    domains: [],
   },
   
   // Configure headers for iframe support and security
