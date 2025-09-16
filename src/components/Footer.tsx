@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function Footer() {
   return (
@@ -8,6 +9,13 @@ export default function Footer() {
           {/* Logo and Description */}
           <div className="md:col-span-1">
             <div className="flex items-center mb-4">
+              <Image
+                src="/logocrochet.webp"
+                alt="Crochet911 Logo"
+                width={32}
+                height={32}
+                className="mr-3"
+              />
               <div className="text-2xl font-bold text-white">
                 Crochet911
               </div>
