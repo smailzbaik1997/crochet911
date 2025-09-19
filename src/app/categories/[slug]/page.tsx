@@ -26,8 +26,8 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
 
   // Enhanced SEO-optimized title and description targeting "crochet patterns for [category]"
   const cleanName = cleanCategoryName(category.name)
-  const seoTitle = `${cleanName} Crochet Patterns - Free & Premium Designs | Crochet911`
-  const seoDescription = `Discover ${cleanName.toLowerCase()} crochet patterns for all skill levels. Browse hundreds of free and premium ${cleanName.toLowerCase()} crochet designs from talented designers worldwide. Perfect for beginners to experts. Find easy ${cleanName.toLowerCase()} patterns, advanced designs, and everything in between.`
+  const seoTitle = `${cleanName} Crochet Patterns - Free Designs & Tutorials | Crochet911`
+  const seoDescription = `Browse ${cleanName.toLowerCase()} crochet patterns for all skill levels. Find free and premium designs with step-by-step instructions, perfect for beginners to advanced crocheters.`
   
   const keywords = [
     `${cleanName.toLowerCase()} crochet patterns`,
@@ -255,7 +255,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                     className="group bg-white rounded-xl shadow-sm hover:shadow-md transition-all duration-200 p-4 text-center border border-slate-200 hover:border-blue-300"
                   >
                     <h3 className="text-sm font-semibold text-slate-900 group-hover:text-blue-600 transition-colors">
-                      {subcat.name}
+                      {cleanCategoryName(subcat.name)}
                     </h3>
                   </Link>
                 ))}
@@ -272,38 +272,14 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
             {/* SEO Content Section */}
             <div className="mb-12">
               <h2 className="text-3xl font-bold text-slate-900 mb-6">
-                Why Choose Our {cleanName} Crochet Patterns?
+                Featured {cleanName} Patterns
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-4">🎯 Perfect for All Skill Levels</h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Our {cleanName.toLowerCase()} crochet pattern collection includes designs for everyone, from 
-                    <strong> beginner {cleanName.toLowerCase()} crochet patterns</strong> with step-by-step tutorials 
-                    to advanced designs that challenge experienced crocheters.
-                  </p>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-4">💝 Free & Premium Options</h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Discover both <strong>free {cleanName.toLowerCase()} crochet patterns</strong> and premium designs. 
-                    Each pattern includes detailed instructions, material lists, and helpful tips for successful completion.
-                  </p>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-4">📚 Detailed Instructions</h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Every <strong>{cleanName.toLowerCase()} crochet pattern</strong> comes with clear, 
-                    easy-to-follow instructions, stitch guides, and helpful photos to ensure your project turns out perfect.
-                  </p>
-                </div>
-                <div className="bg-white rounded-xl p-6 shadow-sm border border-slate-200">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-4">🌟 Designer Quality</h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    All our <strong>crochet patterns for {cleanName.toLowerCase()}</strong> are created by 
-                    talented designers and thoroughly tested to ensure accuracy and beautiful results.
-                  </p>
-                </div>
+              <div className="bg-slate-50 rounded-xl p-6 mb-8">
+                <p className="text-slate-700 leading-relaxed text-center max-w-3xl mx-auto">
+                  Our {cleanName.toLowerCase()} collection features quality patterns for all skill levels. 
+                  From beginner-friendly tutorials to advanced designs, each pattern includes detailed instructions, 
+                  material lists, and helpful tips for successful completion.
+                </p>
               </div>
             </div>
 
@@ -338,52 +314,48 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
               </div>
             )}
 
-            {/* SEO FAQ Section */}
+            {/* FAQ Section - Simplified */}
             <div className="mt-16 bg-white rounded-xl p-8 shadow-sm border border-slate-200">
-              <h2 className="text-3xl font-bold text-slate-900 mb-8 text-center">
-                Frequently Asked Questions About {cleanName} Crochet Patterns
+              <h2 className="text-2xl font-bold text-slate-900 mb-8 text-center">
+                Common Questions About {cleanName} Patterns
               </h2>
-              <div className="space-y-6">
-                <div className="border-b border-slate-200 pb-6">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    What skill level do I need for {cleanName.toLowerCase()} crochet patterns?
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                    What skill levels are available?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    Our {cleanName.toLowerCase()} crochet pattern collection includes designs for all skill levels. 
-                    Beginners can start with simple {cleanName.toLowerCase()} patterns that use basic stitches, 
-                    while experienced crocheters can challenge themselves with intricate designs featuring advanced techniques.
-                  </p>
-                </div>
-                
-                <div className="border-b border-slate-200 pb-6">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    Are there free {cleanName.toLowerCase()} crochet patterns available?
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Yes! We offer many free {cleanName.toLowerCase()} crochet patterns alongside our premium designs. 
-                    Free patterns include basic instructions and are perfect for trying new techniques or quick projects.
-                  </p>
-                </div>
-                
-                <div className="border-b border-slate-200 pb-6">
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    What materials do I need for {cleanName.toLowerCase()} crochet projects?
-                  </h3>
-                  <p className="text-slate-600 leading-relaxed">
-                    Each {cleanName.toLowerCase()} crochet pattern includes a complete materials list with yarn weight, 
-                    hook sizes, and any additional supplies needed. Most patterns can be adapted to use different yarn weights 
-                    with appropriate hook size adjustments.
+                    Our collection includes patterns for all skill levels, from beginner-friendly designs with basic stitches 
+                    to advanced patterns with complex techniques.
                   </p>
                 </div>
                 
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-900 mb-3">
-                    How long does it take to complete {cleanName.toLowerCase()} crochet patterns?
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                    Are there free patterns available?
                   </h3>
                   <p className="text-slate-600 leading-relaxed">
-                    The time required depends on the complexity of the pattern and your skill level. 
-                    Simple {cleanName.toLowerCase()} projects might take a few hours, while detailed designs could take several days or weeks. 
-                    Each pattern includes an estimated completion time to help you plan your project.
+                    Yes! We offer many free patterns alongside premium designs. Free patterns include 
+                    detailed instructions and are perfect for trying new techniques.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                    What materials do I need?
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    Each pattern includes a complete materials list with yarn weight, hook sizes, and any additional supplies needed.
+                  </p>
+                </div>
+                
+                <div>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">
+                    How long do projects take?
+                  </h3>
+                  <p className="text-slate-600 leading-relaxed">
+                    Project time varies by complexity and skill level. Simple projects may take a few hours, 
+                    while detailed designs could take several days.
                   </p>
                 </div>
               </div>
@@ -417,7 +389,7 @@ export default async function CategoryPage({ params, searchParams }: PageProps) 
                   </p>
                 </div>
                 <div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-3">🎆 Practice New Stitches</h3>
+                  <h3 className="text-lg font-semibold text-slate-900 mb-3">.EVT Practice New Stitches</h3>
                   <p className="text-slate-600 mb-4">
                     If your chosen {cleanName.toLowerCase()} pattern includes unfamiliar stitches, 
                     practice them on a small swatch first to build confidence and muscle memory.

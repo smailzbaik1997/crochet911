@@ -152,23 +152,33 @@ export function getDifficultyColor(difficulty: string): string {
 export function generateMetaDescription(pattern: any): string {
   if (pattern.meta_description) return pattern.meta_description
   
+  const maxLength = 160
   const description = pattern.short_description || pattern.description
-  const maxLength = 155
+  const cleanCategoryName = pattern.category?.name?.replace(/ Crochet Patterns$/i, '') || ''
   
-  let meta = `Free crochet pattern: ${pattern.title}.`
-  
-  if (pattern.difficulty) {
-    meta += ` ${formatDifficulty(pattern.difficulty)} level.`
+  // Create more natural meta descriptions
+  if (description && description.length <= maxLength) {
+    return description
   }
   
-  if (pattern.category?.name) {
-    meta += ` Category: ${pattern.category.name}.`
+  // Fallback: create a natural description
+  let meta = `${pattern.difficulty ? formatDifficulty(pattern.difficulty) + ' ' : ''}crochet pattern for ${pattern.title.toLowerCase()}.`
+  
+  if (cleanCategoryName) {
+    meta += ` Perfect ${cleanCategoryName.toLowerCase()} design`
   }
   
+  if (pattern.is_free) {
+    meta += ` - completely free with detailed instructions.`
+  } else {
+    meta += ` with step-by-step guide.`
+  }
+  
+  // If we have space and a description, add a snippet
   const remaining = maxLength - meta.length
-  if (remaining > 0 && description) {
-    const truncated = truncateText(description, remaining - 3)
-    meta += ` ${truncated}`
+  if (remaining > 20 && description) {
+    const snippet = truncateText(description, remaining - 3)
+    meta += ` ${snippet}`
   }
   
   return meta.substring(0, maxLength)
@@ -221,7 +231,13 @@ export function getValidImageUrl(url: string | null, fallback: string = 'https:/
 
 // Clean category name by removing duplicate "Crochet Patterns" text
 export function cleanCategoryName(categoryName: string): string {
-  return categoryName.replace(' Crochet Patterns', '')
+  // Remove various forms of "Crochet Patterns" from the end of category names
+  return categoryName
+    .replace(/ Crochet Patterns$/i, '') // Remove " Crochet Patterns" at the end
+    .replace(/ crochet patterns$/i, '') // Remove " crochet patterns" at the end
+    .replace(/ Crochet patterns$/i, '') // Remove " Crochet patterns" at the end
+    .replace(/\sCrochet\sPatterns$/i, '') // Remove " Crochet Patterns" at the end (with any whitespace)
+    .trim() // Remove any trailing whitespace
 }
 
 // Format category path for breadcrumbs
@@ -251,8 +267,8 @@ export function getCategoryPath(category: any, subcategory?: any) {
 // Generate SEO-optimized category description
 export function generateCategoryDescription(categoryName: string, patternCount?: number): string {
   const cleanName = cleanCategoryName(categoryName)
-  const count = patternCount ? `${patternCount}+ ` : ''
-  return `Discover ${count}${cleanName.toLowerCase()} crochet patterns for all skill levels. Browse free and premium ${cleanName.toLowerCase()} crochet designs from talented designers worldwide. Perfect patterns for beginners to experts with detailed instructions and helpful tips.`
+  const count = patternCount ? `${patternCount} ` : ''
+  return `Find ${count}${cleanName.toLowerCase()} crochet patterns for all skill levels. Browse free and premium designs with step-by-step instructions, perfect for beginners to advanced crocheters.`
 }
 
 // Generate long-tail keywords for category pages

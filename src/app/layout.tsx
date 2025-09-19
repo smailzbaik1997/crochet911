@@ -14,10 +14,10 @@ const poppins = Poppins({
 
 export const metadata: Metadata = {
   title: {
-    default: "Crochet911 - Free & Premium Crochet Patterns for All Skill Levels",
+    default: "Free Crochet Patterns - Thousands of Designs for All Levels | Crochet911",
     template: "%s | Crochet911"
   },
-  description: "Discover thousands of crochet patterns for all skill levels. Browse free and premium designs including animals, clothing, home decor, and more. Your ultimate crochet companion with detailed instructions and helpful tips.",
+  description: "Browse thousands of free crochet patterns for beginners to experts. Find step-by-step tutorials for amigurumi, clothing, home decor, and more with detailed instructions and helpful tips.",
   keywords: [
     "crochet patterns",
     "free crochet patterns", 

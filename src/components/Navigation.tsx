@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
 import { useRealtimeCategories } from '@/lib/realtime-hooks'
+import { cleanCategoryName } from '@/lib/utils'
 
 interface Category {
   id: string
@@ -169,7 +170,7 @@ export default function Navigation() {
                                   className="block text-xs text-slate-600 hover:text-slate-800 transition-colors duration-200 hover:underline"
                                 >
                                   <div className="flex items-center justify-between">
-                                    <span>{sub.name}</span>
+                                    <span>{cleanCategoryName(sub.name)}</span>
                                     {sub.pattern_count && sub.pattern_count > 0 && (
                                       <span className="ml-2 text-xs text-slate-400">({sub.pattern_count})</span>
                                     )}
@@ -317,7 +318,7 @@ export default function Navigation() {
                                 className="flex items-center justify-between text-sm text-slate-600 hover:text-blue-600 px-3 py-2"
                                 onClick={() => setIsMenuOpen(false)}
                               >
-                                <span>{sub.name}</span>
+                                <span>{cleanCategoryName(sub.name)}</span>
                                 {sub.pattern_count && sub.pattern_count > 0 && (
                                   <span className="text-xs text-slate-400">({sub.pattern_count})</span>
                                 )}

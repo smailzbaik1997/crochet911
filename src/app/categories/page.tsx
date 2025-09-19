@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import type { Metadata } from 'next'
 import { getCategoriesWithSubcategories } from '@/lib/data'
+import { cleanCategoryName } from '@/lib/utils'
 
 // Type definitions
 type Subcategory = {
@@ -120,7 +121,7 @@ export default async function CategoriesPage() {
                         className="group p-4 rounded-lg border border-slate-200 hover:border-blue-300 hover:bg-blue-50 transition-all duration-200"
                       >
                         <h4 className="text-sm font-medium text-slate-900 group-hover:text-blue-600 text-center">
-                          {subcat.name}
+                          {cleanCategoryName(subcat.name)}
                         </h4>
                       </Link>
                     ))}

@@ -3,7 +3,7 @@ import { Metadata } from 'next'
 import Link from 'next/link'
 import { getCategoryBySlug, getPatternsByCategoryAndSubcategories } from '@/lib/data'
 import PatternCard from '@/components/PatternCard'
-import { generateCategoryDescription, generateCategoryKeywords, generateCategoryFAQ } from '@/lib/utils'
+import { generateCategoryDescription, generateCategoryKeywords, generateCategoryFAQ, cleanCategoryName } from '@/lib/utils'
 
 interface PageProps {
   params: {
@@ -21,12 +21,12 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     }
   }
 
-  const categoryName = category.name.replace(' Crochet Patterns', '')
+  const categoryName = cleanCategoryName(category.name)
   const keywords = generateCategoryKeywords(categoryName)
 
   return {
-    title: `Crochet Patterns for ${categoryName} - Free & Premium Designs | Crochet911`,
-    description: generateCategoryDescription(category.name),
+    title: `${categoryName} Crochet Patterns - Free Designs & Tutorials | Crochet911`,
+    description: `Browse ${categoryName.toLowerCase()} crochet patterns for all skill levels. Find free and premium designs with detailed step-by-step instructions.`,
     keywords: keywords.join(', '),
     openGraph: {
       title: `Crochet Patterns for ${categoryName}`,
@@ -64,7 +64,7 @@ export default async function CrochetPatternsForCategoryPage({ params }: PagePro
   }
 
   const patterns = await getPatternsByCategoryAndSubcategories(category.slug, { limit: 50 })
-  const categoryName = category.name.replace(' Crochet Patterns', '')
+  const categoryName = cleanCategoryName(category.name)
   const faqItems = generateCategoryFAQ(categoryName)
 
   const breadcrumbs = [

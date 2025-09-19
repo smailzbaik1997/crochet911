@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { getCategoriesWithSubcategories } from '@/lib/data'
+import { cleanCategoryName } from '@/lib/utils'
 
 interface Category {
   id: string
@@ -78,7 +79,7 @@ export default function Navigation() {
                               href={`/categories/${sub.slug}`}
                               className="block text-xs text-gray-600 hover:text-pink-600 transition-colors"
                             >
-                              {sub.name}
+                              {cleanCategoryName(sub.name)}
                             </Link>
                           ))}
                         </div>
@@ -197,7 +198,7 @@ export default function Navigation() {
                           className="block text-sm text-gray-600 hover:text-pink-600 px-3 py-1"
                           onClick={() => setIsMenuOpen(false)}
                         >
-                          {sub.name}
+                          {cleanCategoryName(sub.name)}
                         </Link>
                       ))}
                     </div>

@@ -7,8 +7,8 @@ import HomeContent from '@/components/HomeContent'
 
 // SEO-optimized metadata for homepage
 export const metadata: Metadata = {
-  title: 'Crochet Patterns Directory - Free & Premium Designs | Crochet911',
-  description: 'Discover the ultimate crochet patterns directory with thousands of free and premium designs. Browse animal, holiday, clothing, and home decor patterns for all skill levels. Your complete crochet pattern resource.',
+  title: 'Free Crochet Patterns Directory - Thousands of Designs | Crochet911',
+  description: 'Browse thousands of free crochet patterns for all skill levels. Find beginner-friendly tutorials, advanced designs, amigurumi patterns, and more with step-by-step instructions.',
   keywords: [
     'crochet patterns directory',
     'free crochet patterns',
